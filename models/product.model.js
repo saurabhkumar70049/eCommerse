@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const productSchema = new mongoose.Schema({
     pid:{
         type:String,
-        unique:true,
+        // unique:true,
         require:true
     },
     name:{
@@ -14,8 +14,8 @@ const productSchema = new mongoose.Schema({
         type:Number,
         require:true
     },
-    rating:{
-        tyep:Number
+    qty:{
+        type:Number
     }
 })
-mongoose.model('products', productSchema);
+mongoose.model("Product", productSchema);
