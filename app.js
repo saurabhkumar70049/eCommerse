@@ -1,7 +1,11 @@
 import express from 'express';
 import mongoose from 'mongoose';
+
 import "./models/product.model.js";
-import route from './routers/product.route.js';
+import "./models/user.model.js";
+
+import productRoute from './routers/product.route.js';
+import userRoute from './routers/user.route.js';
 
 
 const PORT = 8080;
@@ -20,7 +24,10 @@ app.use(express.json());
         console.log("Fail to connect with Database ", err);
     })
 
-app.use('/product', route);
+app.use('/product', productRoute);
+
+
+app.use('/user', userRoute);
 
 
 
