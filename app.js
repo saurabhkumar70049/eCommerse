@@ -16,7 +16,7 @@ const app = express();
 app.use(express.json());
 
 //connect to database
- mongoose.connect(mongodbURL, {useUnifiedTopology: true, useNewUrlParser: true, autoIndex: true})
+mongoose.connect(mongodbURL, {useUnifiedTopology: true, useNewUrlParser: true, autoIndex: true})
     .then(()=> {
         console.log("Server Connected to Database");
     })
