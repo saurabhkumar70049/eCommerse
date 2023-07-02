@@ -3,9 +3,12 @@ import mongoose from 'mongoose';
 
 import "./models/product.model.js";
 import "./models/user.model.js";
+import "./models/cart.model.js";
+
 
 import productRoute from './routers/product.route.js';
 import userRoute from './routers/user.route.js';
+import cartRoute from './routers/cart.route.js';
 
 
 const PORT = 8080;
@@ -28,6 +31,9 @@ app.use('/product', productRoute);
 
 
 app.use('/user', userRoute);
+
+
+app.use('/cart', cartRoute);
 
 
 
