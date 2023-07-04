@@ -4,6 +4,8 @@ import httpStatus from 'http-status';
 import jwt from 'jsonwebtoken';
 import 'dotenv/config.js';
 
+
+import sendEmail from '../utils/email.js';
 import {addUserService, fetchAllUserService, fetchOneUserService, updateUserService, deleteUserService, loginUserService} from '../services/user.service.js';
 
 async function addUserController(req, res){
@@ -23,6 +25,7 @@ async function addUserController(req, res){
     }
     const serviceData = await addUserService(newUser);
     if(serviceData.success){
+        sendEmail(email, "You are registered successfully", `hello ${name} ! \n You are register succefully \n Thank you \n LPUKart `)
         res.status(200).json({
             message:serviceData.message,
             data:serviceData.data
