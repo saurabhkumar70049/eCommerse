@@ -80,8 +80,22 @@ async function fetchUserCartService(uid){
     }
 }
 
-async function updateCartService(_id, inputData){
+async function updateCartService(inputData){
     
+    const cartData = await Cart.findOneAndUpdate({uid : inputData.uid}, {$set :{'pid.quantity': inputData.quantity}});
+    if(cartData){
+        return ({
+            success:true,
+            message:"quantity of product is updated",
+            data: cartData
+        })
+    }
+    else {
+        return ({
+            success:false,
+            error:"cart not found"
+        })
+    }
 }
 
 async function deleteCartService(){
@@ -89,4 +103,4 @@ async function deleteCartService(){
 }
 
 
-export {addCartService, fetchAllCartService, fetchUserCartService};
+export {addCartService, fetchAllCartService, fetchUserCartService, updateCartService};

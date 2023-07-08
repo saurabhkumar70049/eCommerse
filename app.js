@@ -12,7 +12,7 @@ import cartRoute from './routers/cart.route.js';
 
 
 const PORT = 8080;
-const mongodbURL = 'mongodb://localhost:27017/E-commerse';
+const mongodbURL = 'mongodb://asingh88029:e9vfnVfFicgUdGVf@ac-clksbmc-shard-00-00.lzqwx73.mongodb.net:27017,ac-clksbmc-shard-00-01.lzqwx73.mongodb.net:27017,ac-clksbmc-shard-00-02.lzqwx73.mongodb.net:27017/?ssl=true&replicaSet=atlas-gh4fgn-shard-0&authSource=admin&retryWrites=true&w=majority';
 
 
 const app = express();

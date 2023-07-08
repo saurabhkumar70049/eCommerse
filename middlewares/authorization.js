@@ -16,24 +16,27 @@ const authorization = (role) => async (req, res, next)=> {
         )
     }
     try {
-        const payload = await jwt.verify(token, process.env.JSON_SECRET_KEY);
-        console.log(payload);
-        if(role === "" || payload.role === role){
-            req._id = payload._id;
-            req.email = payload.email;
-            req.role = payload.role;
-            next();
+        const user = await jwt.verify(token, process.env.JSON_SECRET_KEY);
+        let checkUser = false;
+        for(let i = 0; i < role.size(); i++){
+            if(role[i] === user.role){
+                checkUser = true;
+            }
         }
-        else if(payload.role !== role){
+        console.log(payload);
+    
+        if(payload.role !== role){
             return(
                 res.status(httpStatus.UNAUTHORIZED).json({
                     message:"user access restricted"
                 })
             )
         }
-        // req._id = payload._id;
-        // req.email = payload.email;
-        // next();
+        req._id = user._id;
+        req.email = user.email;
+        req.role = user.role;
+        next();
+        
     }
     catch(err){
         return (

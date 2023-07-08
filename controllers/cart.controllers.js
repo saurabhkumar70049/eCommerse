@@ -1,7 +1,7 @@
 import httpStatus from 'http-status';
 
 
-import { addCartService, fetchAllCartService ,fetchUserCartService } from "../services/cart.service.js";
+import { addCartService, fetchAllCartService ,fetchUserCartService, updateCartService} from "../services/cart.service.js";
 
 
 async function addCartController(req, res){
@@ -66,4 +66,24 @@ async function fetchUserCartController(req, res){
     }
 }
 
-export {addCartController, fetchAllCardController, fetchUserCartController};
+async function updateCartController(req, res){
+    const inputData = req.body;
+    const serviceData = await updateCartService(inputData);
+    if(serviceData.success){
+        return (
+            res.status(httpStatus.OK).json({
+                message:serviceData.message,
+                data: serviceData.data
+            })
+        )
+    }
+    else {
+        return (
+            res.status(httpStatus.NOT_FOUND).json({
+                error:serviceData.error
+            })
+        )
+    }
+}
+
+export {addCartController, fetchAllCardController, fetchUserCartController, updateCartController};

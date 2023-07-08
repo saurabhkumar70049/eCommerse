@@ -5,20 +5,20 @@ const product = mongoose.model("Product");
 
 
 async function addProductService(productData) {
-    const {pid, name, price, qty} = productData;
-    if(!pid || !name || !qty || !price){
+    const {name, price, quantity} = productData;
+    if(!name || !price){
         return {
             success:false,
             message:"Fill all the field"
         }
     }
-    const productFind = await product.findOne({pid:productData.pid});
-    if(productFind) {
-        return {
-            success:false,
-            message:"This product is already exist"
-        }
-    }
+    // const productFind = await product.findOne({pid:productData.pid});
+    // if(productFind) {
+    //     return {
+    //         success:false,
+    //         message:"This product is already exist"
+    //     }
+    // }
     productData = new product({
         ...productData
     })

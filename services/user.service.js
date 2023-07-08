@@ -104,7 +104,7 @@ async function deleteUserService(_id){
 
 }
 
-async function loginUserService(email){
+async function findByEmailService(email){
     const userData = await User.findOne({email});
     if(userData){
         return {
@@ -122,4 +122,74 @@ async function loginUserService(email){
     }
 }
 
-export {addUserService, fetchAllUserService, fetchOneUserService, updateUserService, deleteUserService, loginUserService};
+async function forgetPasswordService(email, otp, otpExpire){
+    const user = await User.findOne({email});
+
+    console.log(user)
+
+    const updatedUserData = {
+        otp,
+        otpExpire
+    }
+
+    const newUser = await User.findByIdAndUpdate(user._id,updatedUserData,{new:true})
+    if(newUser){
+        return {
+            success:true,
+            message:"Opt sent to register email Id",
+            data:newUser
+        }
+    }
+    else {
+        return {
+            success:false,
+            error:"Something Wrong in updation"
+            
+        }
+    }
+
+}
+
+async function resetPasswordService(email, otp, password){
+    const user = await User.findOne({email, otp});
+    if(user){
+        const expiryCheck = Date.now() < new Date(user.otpExpire).getTime();
+        if(!expiryCheck){
+            return {
+                success:false,
+                error:"OTP expire", 
+                data:expiryCheck
+            }
+        }
+    }
+    else {
+        return {
+            success:false,
+            error:"Invalid OTP",
+            data:user
+        }
+    }
+
+    const updateData = {
+        password,
+        otp:null,
+        otpExpire:null,
+    }
+    const updateSave = await User.findByIdAndUpdate(user._id,updateData,{new:true})
+    if(updateSave){
+        return {
+            success:true,
+            message:"Password reset successfully",
+            data:updateSave
+        }
+    }
+    else {
+        return {
+            success:false,
+            error:"there is some problem in data updating"
+        }
+        
+    }
+}
+
+export {addUserService, fetchAllUserService, fetchOneUserService, updateUserService, deleteUserService, findByEmailService, forgetPasswordService, resetPasswordService};

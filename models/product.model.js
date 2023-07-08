@@ -1,11 +1,7 @@
 import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema({
-    pid:{
-        type:String,
-        // unique:true,
-        require:true
-    },
+    
     name:{
         type:String,
         require:true
@@ -14,8 +10,15 @@ const productSchema = new mongoose.Schema({
         type:Number,
         require:true
     },
-    qty:{
+    quantity:{
         type:Number
-    }
+    },
+    tag:[{
+        type:String,
+    }],
+    catogory:[{
+        type:String,
+    }]
+
 })
 mongoose.model("Product", productSchema);

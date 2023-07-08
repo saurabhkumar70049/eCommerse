@@ -23,6 +23,12 @@ const userSchema = new mongoose.Schema({
         type:String,
         enum:["customer", "admin"],// The enum validator is an array that will check if the value given is an item in the array. If the value is not in the array, Mongoose will throw a ValidationError when you try to save()
         default:"customer"
+    },
+    otp:{
+        type:Number,
+    },
+    otpExpire:{
+        type:Date
     }
 })
 
