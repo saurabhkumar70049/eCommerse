@@ -12,13 +12,13 @@ async function addProductService(productData) {
             message:"Fill all the field"
         }
     }
-    // const productFind = await product.findOne({pid:productData.pid});
-    // if(productFind) {
-    //     return {
-    //         success:false,
-    //         message:"This product is already exist"
-    //     }
-    // }
+    const productFind = await product.findOne({pid:productData.pid});
+    if(productFind) {
+        return {
+            success:false,
+            message:"This product is already exist"
+        }
+    }
     productData = new product({
         ...productData
     })
