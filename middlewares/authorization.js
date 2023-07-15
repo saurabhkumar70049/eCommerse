@@ -16,7 +16,7 @@ const authorization = (role) => async (req, res, next)=> {
         )
     }
     try {
-        const user = await jwt.verify(token, process.env.JSON_SECRET_KEY);
+        const user = await jwt.verify(token, process.env.JWS_LOGIN_SECRET_KEY);
         let checkUser = false;
         for(let i = 0; i < role.size(); i++){
             if(role[i] === user.role){

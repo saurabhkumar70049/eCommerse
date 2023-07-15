@@ -1,8 +1,10 @@
 import express from 'express';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt'; 
 import httpStatus from 'http-status';
 import jwt from 'jsonwebtoken';
+import emailValidator from 'deep-email-validator';
 import 'dotenv/config.js';
+
 
 
 import sendEmail from '../utils/email.js';
@@ -17,6 +19,17 @@ async function addUserController(req, res){
         })
     }
 
+    //email validation 
+    const isEmailValid = await emailValidator.validate(email);
+    if(!isEmailValid.valid) {
+        return (
+            res.status(httpStatus.BAD_REQUEST).json({
+                error:isEmailValid.validators.smtp
+            })
+        )
+    }
+
+
     const newPassword = await bcrypt.hash(password, 10);
     const newUser = {name, email, role, password:newPassword};
     
@@ -25,7 +38,14 @@ async function addUserController(req, res){
     }
     const serviceData = await addUserService(newUser);
     if(serviceData.success){
-        sendEmail(email, "You are registered successfully", `hello ${name} ! \n You are register succefully \n Thank you \n LPUKart `)
+        //email valification and generate token for email verification 
+
+        const emailToken = jwt.sign({
+            _id:serviceData.data._id,
+        },process.env.JWT_EMAIL_SECRET_KEY,{expiresIn: '10m'})
+
+        const text = `HEY ${name} \nYou are partially register to our busness to complete the registration plese verify your email \n http://localhost:8080/user/verifyEmail/${emailToken}`
+        sendEmail(email, "Email Verification", text);
         res.status(200).json({
             message:serviceData.message,
             data:serviceData.data
@@ -36,6 +56,50 @@ async function addUserController(req, res){
             message:serviceData.message
         })
     }
+}
+
+
+
+async function emailVarification(req, res){
+    const {emailToken} = req.params;
+    console.log(emailToken);
+    try{
+        const isEmailVarified = await jwt.verify(emailToken, process.env.JWT_EMAIL_SECRET_KEY);
+        // console.log("email token id : ",isEmailVarified._id);
+        if(isEmailVarified){
+            try{
+                const serviceData = await updateUserService(isEmailVarified._id, {emailVerify:true});
+                if(serviceData.success){
+                    return (
+                        res.status(httpStatus.OK).json({
+                            message:serviceData.message
+                        })
+                    )
+                }
+                else {
+                    return (
+                        res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+                            error:serviceData.error
+                        })
+                    )
+                }
+            }
+            catch(err){
+                return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+                    error:err.message
+                })
+            }
+        }
+        
+    }
+    catch(err){
+        return (
+            res.status(httpStatus.BAD_REQUEST).json({
+                error: err.message
+            })
+        )
+    }
+
 }
 
 async function fetchAllUserController(req, res){
@@ -115,10 +179,11 @@ async function loginUserController(req, res){
         )
     }
     const serviceData = await findByEmailService(email);
-    if(!serviceData.success){
+
+    if(!serviceData.success || !serviceData.data.emailVerify){
         return(
             res.status(httpStatus.UNAUTHORIZED).json({
-                message:"User not found"
+                message:"User not found or email not verify"
             })
         )
     }
@@ -134,7 +199,7 @@ async function loginUserController(req, res){
         _id:serviceData.data._id,
         role: serviceData.data.role,
         email: serviceData.data.email
-    }, process.env.JSON_SECRET_KEY)
+    }, process.env.JWT_LOGIN_SECRET_KEY, {expiresIn: '1h'})
     return (
         res.status(httpStatus.OK).json({
             token:jwtToken,
@@ -208,4 +273,4 @@ async function resetPasswordController(req, res){
 }
 
 
-export {addUserController, fetchAllUserController, fetchOneUserController, updateUserController, deleteUserController, loginUserController, forgetPasswordController, resetPasswordController};
+export {addUserController, emailVarification ,fetchAllUserController, fetchOneUserController, updateUserController, deleteUserController, loginUserController, forgetPasswordController, resetPasswordController};
