@@ -273,4 +273,9 @@ async function resetPasswordController(req, res){
 }
 
 
-export {addUserController, emailVarification ,fetchAllUserController, fetchOneUserController, updateUserController, deleteUserController, loginUserController, forgetPasswordController, resetPasswordController};
+async function logoutUserController(req, res){
+    
+}
+
+
+export {addUserController, emailVarification ,fetchAllUserController, fetchOneUserController, updateUserController, deleteUserController, loginUserController, forgetPasswordController, resetPasswordController, logoutUserController};

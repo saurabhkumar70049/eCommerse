@@ -1,6 +1,6 @@
 import express, { Router } from "express";
 
-import {addUserController, emailVarification,fetchAllUserController, fetchOneUserController, updateUserController, deleteUserController, loginUserController, forgetPasswordController, resetPasswordController} from "../controllers/user.controller.js";
+import {addUserController, emailVarification,fetchAllUserController, fetchOneUserController, updateUserController, deleteUserController, loginUserController, forgetPasswordController, resetPasswordController, logoutUserController} from "../controllers/user.controller.js";
 
 import authorization from "../middlewares/authorization.js";
 
@@ -23,6 +23,8 @@ route.post('/login', loginUserController);
 route.post('/forgetPassword', forgetPasswordController);
 
 route.post('/resetPassword', resetPasswordController);
+
+route.post('/logout', logoutUserController);
 
 export default route;
 
