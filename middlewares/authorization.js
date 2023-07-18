@@ -8,6 +8,7 @@ import jwt from 'jsonwebtoken';
 
 const authorization = (role) => async (req, res, next)=> {
     let token = req.headers.authorization;
+
     if(!token){
         return (
             res.status(httpStatus.UNAUTHORIZED).json({
@@ -16,16 +17,14 @@ const authorization = (role) => async (req, res, next)=> {
         )
     }
     try {
-        const user = await jwt.verify(token, process.env.JWS_LOGIN_SECRET_KEY);
+        const user = await jwt.verify(token, process.env.JWT_LOGIN_SECRET_KEY);
         let checkUser = false;
-        for(let i = 0; i < role.size(); i++){
+        for(let i = 0; i < role.length; i++){
             if(role[i] === user.role){
                 checkUser = true;
             }
         }
-        console.log(payload);
-    
-        if(payload.role !== role){
+        if(!checkUser){
             return(
                 res.status(httpStatus.UNAUTHORIZED).json({
                     message:"user access restricted"

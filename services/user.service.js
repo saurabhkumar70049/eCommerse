@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 // import user from '../models/user.model.js';
 
 const User = mongoose.model("User");
+const Token = mongoose.model("Token");
 
 
 async function addUserService(userData){
@@ -192,4 +193,28 @@ async function resetPasswordService(email, otp, password){
     }
 }
 
-export {addUserService, fetchAllUserService, fetchOneUserService, updateUserService, deleteUserService, findByEmailService, forgetPasswordService, resetPasswordService};
+async function logoutUserService(token, uid){
+  
+    const tokenData = new Token({
+        uid,
+        token
+    })
+    try{
+        const saveData = await tokenData.save();
+        if(saveData){
+            return ({
+                success:true,
+                message:"User Logout Successfully",
+                data:saveData
+            })
+        }
+    }
+    catch(err){
+        return ({
+            success:false,
+            error:err.message
+        })
+    }
+}
+
+export {addUserService, fetchAllUserService, fetchOneUserService, updateUserService, deleteUserService, findByEmailService, forgetPasswordService, resetPasswordService, logoutUserService};

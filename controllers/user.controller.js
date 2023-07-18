@@ -8,7 +8,7 @@ import 'dotenv/config.js';
 
 
 import sendEmail from '../utils/email.js';
-import {addUserService, fetchAllUserService, fetchOneUserService, updateUserService, deleteUserService, findByEmailService, forgetPasswordService, resetPasswordService} from '../services/user.service.js';
+import {addUserService, fetchAllUserService, fetchOneUserService, updateUserService, deleteUserService, findByEmailService, forgetPasswordService, resetPasswordService, logoutUserService} from '../services/user.service.js';
 
 async function addUserController(req, res){
     const {name, email, password, role, mobile} = req.body;
@@ -57,8 +57,6 @@ async function addUserController(req, res){
         })
     }
 }
-
-
 
 async function emailVarification(req, res){
     const {emailToken} = req.params;
@@ -121,6 +119,13 @@ async function fetchAllUserController(req, res){
 
 async function fetchOneUserController(req, res){
     const {id} = req.params;
+    if(id !== req._id && req.role !== "admin"){
+        return (
+            res.status(httpStatus.UNAUTHORIZED).json({
+                error:"You couldn't see the other people detail"
+            })
+        )
+    }
     const serviceData = await fetchOneUserService(id);
     if(serviceData.success){
         res.status(200).json({
@@ -136,7 +141,7 @@ async function fetchOneUserController(req, res){
 }
 
 async function updateUserController(req, res){
-    const {id} = req.params;
+    const id = req._id;
     const inputData = req.body;
     const serviceData = await updateUserService(id, inputData);
     if(serviceData.success){
@@ -154,7 +159,7 @@ async function updateUserController(req, res){
 }
 
 async function deleteUserController(req, res){
-    const {id} = req.params;
+    const id = req._id;
     const serviceData = await deleteUserService(id);
     if(serviceData.success){
         res.status(200).json({
@@ -229,7 +234,7 @@ async function forgetPasswordController(req, res){
     const otpExpire = new Date(Date.now() + (15 * 60 * 1000));
     const forgetServiceData = await forgetPasswordService(email, otp, otpExpire);
     if(forgetServiceData.success){
-        const txt = `Your password reset OTP is ${otp} /nand it is expire at ${(otpExpire)}`
+        const txt = `Your password reset OTP is ${otp} \nand it is expire at ${(otpExpire)}`
         sendEmail(email, "OTP for Password Reset", txt);
         res.status(200).json({
             message:forgetServiceData.message,
@@ -274,7 +279,25 @@ async function resetPasswordController(req, res){
 
 
 async function logoutUserController(req, res){
+    const token = req.headers.authorization;
+    const uid = req._id;
+    const serviceData = await logoutUserService(token, uid);
     
+    if(serviceData.success){
+        return (
+            res.status(httpStatus.OK).json({
+                message:serviceData.message,
+                data:serviceData.data
+            })
+        )
+    }
+    else {
+        return (
+            res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+                error:serviceData.error
+            })
+        )
+    }
 }
 
 

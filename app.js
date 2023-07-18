@@ -7,6 +7,7 @@ import "./models/user.model.js";
 import "./models/cart.model.js";
 import "./models/shippingAddress.model.js";
 import "./models/payment.model.js";
+import "./models/tokenBlock.model.js";
 
 
 import productRoute from './routers/product.route.js';
