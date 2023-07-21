@@ -5,14 +5,8 @@ const product = mongoose.model("Product");
 
 
 async function addProductService(productData) {
-    const {name, price, quantity} = productData;
-    if(!name || !price){
-        return {
-            success:false,
-            message:"Fill all the field"
-        }
-    }
-    const productFind = await product.findOne({pid:productData.pid});
+    
+    const productFind = await product.findOne({productId:productData.productId});
     if(productFind) {
         return {
             success:false,
@@ -76,7 +70,7 @@ async function fetchAllProductServices(){
 }
 
 async function fetchOneProductServices(_id) {
-    const productFind = await product.findOne({_id:_id});
+    const productFind = await product.findOne({_id});
     if(productFind){
         return {
             success: true,
@@ -84,7 +78,7 @@ async function fetchOneProductServices(_id) {
             data : productFind
         }
     }
-    if(!productFind){
+    else if(!productFind){
         return {
             success: false,
             message: "Product is not Available",
@@ -101,7 +95,7 @@ async function fetchOneProductServices(_id) {
 
 
 async function updateProductService(_id, updateData){
-    const updatedData = await product.updateOne({_id:_id}, {$set:{name:updateData.name, price: updateData.price, qty: updateData.qty}});
+    const updatedData = await product.updateOne({_id}, {$set:{name:updateData.name, price: updateData.price, qty: updateData.qty}});
     if(updatedData){
         return {
             success:true,

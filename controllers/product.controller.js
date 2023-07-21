@@ -1,25 +1,30 @@
-
-import express from 'express';
+import httpStatus from 'http-status';
 import {addProductService, fetchAllProductServices, fetchOneProductServices, updateProductService, deleteProductService} from '../services/product.service.js';
+import { json } from 'express';
 
 
 async function addProductController(req, res) {
     const newProduct = req.body;
-    const serviceData = await addProductService(newProduct)
-    // .then((serviceData)=> { // when i try to use it as promise it give me error that success property undifine
-    //     if(serviceData.success){
-    //         res.status(200).send({
-    //             message:serviceData.message,
-    //             data:serviceData.data
-    //         })
-    //     }
-    //     else {
-    //         res.status(500).send({
-    //             message:serviceData.message
-    //         })
-    //     }    
-    // })
+    if(!newProduct.name  && !newProduct.productId && !newProduct.price && !newProduct.quantity){
+        return (
+            res.status(httpStatus.BAD_REQUEST).json({
+                message:"Please fill all mandory fields"
+            })
+        )
+    }
+    if(req.file){
+        console.log(req.file.location);
+        newProduct.imageUrl = req.file.location;
+    }
+    if(newProduct.tag){
+        newProduct.tag = JSON.parse(newProduct.tag); // start from here, parse method not working
+    }
+    if(newProduct.catogory){
+        newProduct.tag = JSON.parse(newProduct.catogory);
+    }
 
+    const serviceData = await addProductService(newProduct)
+    
     if(serviceData.success){
         res.status(200).send({
             message:serviceData.message,
@@ -28,14 +33,14 @@ async function addProductController(req, res) {
     }
     else {
         res.status(500).send({
-            message:serviceData.message
+            error:serviceData.message
         })
     }
 }
 
 
 async function fetchAllProductController(req, res) {
-    // const newProduct = req.body;
+
     const serviceData = await fetchAllProductServices();
     if(serviceData.success){
         res.status(200).send({
@@ -80,7 +85,7 @@ async function updateProductController(req, res) {
     }
     else {
         res.status(500).json({
-            message: serviceData.message
+            error: serviceData.message
         })
     }
 }
