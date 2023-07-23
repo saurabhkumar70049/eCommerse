@@ -36,6 +36,10 @@ async function addUserController(req, res){
     if(mobile){
         newUser.mobile = mobile;
     }
+    if(req.file){
+        console.log(req.file);
+        newUser.profileImageUrl = req.file.location;
+    }
     const serviceData = await addUserService(newUser);
     if(serviceData.success){
         //email valification and generate token for email verification 

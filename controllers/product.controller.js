@@ -12,16 +12,16 @@ async function addProductController(req, res) {
             })
         )
     }
-    if(req.file){
-        console.log(req.file.location);
-        newProduct.imageUrl = req.file.location;
+    
+    if(req.files){
+        let arr = [];
+        
+        for(const data of req.files){
+            arr.push(data.location);
+        }
+        newProduct.imageUrl = arr;
     }
-    if(newProduct.tag){
-        newProduct.tag = JSON.parse(newProduct.tag); // start from here, parse method not working
-    }
-    if(newProduct.catogory){
-        newProduct.tag = JSON.parse(newProduct.catogory);
-    }
+    
 
     const serviceData = await addProductService(newProduct)
     
@@ -50,10 +50,11 @@ async function fetchAllProductController(req, res) {
     }
     else {
         res.status(500).send({
-            message:serviceData.message
+            error:serviceData.message
         })
     }
 }
+
 
 async function fetchOneProductController(req, res){
     const id = req.params.id;
@@ -71,12 +72,23 @@ async function fetchOneProductController(req, res){
     }
 }
 
+
 async function updateProductController(req, res) {
     const {id} = req.params;
-    const userData = req.body;
+    const productData = req.body;
+    
+    
 
-    const serviceData = await updateProductService(id, userData);
+    if(req.files){
+        let arr = [];
 
+        for(const data of req.files){
+            arr.push(data.location);
+        }
+        productData.imageUrl = arr;
+    }
+
+    const serviceData = await updateProductService(id, productData);
     if(serviceData.success) {
         res.status(200).json({
             message: serviceData.message,
@@ -89,6 +101,7 @@ async function updateProductController(req, res) {
         })
     }
 }
+
 
 async function deleteProductController(req, res){
     const {id} = req.params;
@@ -105,5 +118,6 @@ async function deleteProductController(req, res){
         })
     }
 }
+
 
 export {addProductController, fetchAllProductController, fetchOneProductController, updateProductController, deleteProductController};

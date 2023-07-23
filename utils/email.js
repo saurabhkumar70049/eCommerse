@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import 'dotenv/config';
 
 
 let mailTransport = nodemailer.createTransport({
@@ -7,8 +8,8 @@ let mailTransport = nodemailer.createTransport({
     port: 465,
     secure: true,
     auth:{
-        user:'saurabhbarej@gmail.com',
-        pass:'gvnqnphcdkqdwhrj'
+        user:process.env.EMAIL_USERID,
+        pass:process.env.EMAIL_PASS
     }
 })
 
@@ -16,7 +17,7 @@ let mailTransport = nodemailer.createTransport({
 
 async function sendEmail(to, subject, text){
     const mailDetails = {
-        from:"saurabhbarej@gmail.com",
+        from:process.env.EMAIL_USERID,
         to,
         subject,
         text

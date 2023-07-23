@@ -94,8 +94,9 @@ async function fetchOneProductServices(_id) {
 }
 
 
-async function updateProductService(_id, updateData){
-    const updatedData = await product.updateOne({_id}, {$set:{name:updateData.name, price: updateData.price, qty: updateData.qty}});
+async function updateProductService(id, updateData){
+    
+    const updatedData = await product.findByIdAndUpdate(id,updateData,{new:true});;
     if(updatedData){
         return {
             success:true,

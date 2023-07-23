@@ -2,6 +2,7 @@ import express, { Router } from "express";
 
 import authorization from "../middlewares/authorization.js";
 import tokenValidation from '../middlewares/tokenValidation.js';
+import uploadImage from "../middlewares/uploadImage.js";
 
 
 import {addUserController, emailVarification,fetchAllUserController, fetchOneUserController, updateUserController, deleteUserController, loginUserController, forgetPasswordController, resetPasswordController, logoutUserController} from "../controllers/user.controller.js";
@@ -10,7 +11,7 @@ import {addUserController, emailVarification,fetchAllUserController, fetchOneUse
 
 const route = express.Router();
 
-route.post('/add', addUserController);
+route.post('/add', uploadImage.single('profile'), addUserController);
 
 route.get('/verifyEmail/:emailToken', emailVarification);
 

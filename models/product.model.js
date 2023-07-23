@@ -21,9 +21,7 @@ const productSchema = new mongoose.Schema({
     imageUrl: [
         {type:String}
     ],
-    rating:{
-        type:Number
-    },
+    
     tag:[{
         type:String,
     }],
